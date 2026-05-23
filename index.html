@@ -534,7 +534,7 @@
         <div class="gold-line"></div>
       </div>
 
-      <form id="leadForm">
+      <form id="leadForm" action="https://formspree.io/f/mwvzbdpw" method="POST">
         <div class="form-row">
           <div class="form-group">
             <label for="nombre">Nombre</label>
@@ -701,10 +701,28 @@
 </footer>
 
 <script>
-  document.getElementById('leadForm').addEventListener('submit', function(e) {
+  document.getElementById('leadForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    this.style.display = 'none';
-    document.getElementById('formSuccess').style.display = 'block';
+    const btn = this.querySelector('.btn-submit');
+    btn.textContent = 'Enviando...';
+    btn.disabled = true;
+    try {
+      const response = await fetch(this.action, {
+        method: 'POST',
+        body: new FormData(this),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        this.style.display = 'none';
+        document.getElementById('formSuccess').style.display = 'block';
+      } else {
+        btn.textContent = 'Error al enviar. Intenta de nuevo.';
+        btn.disabled = false;
+      }
+    } catch {
+      btn.textContent = 'Error al enviar. Intenta de nuevo.';
+      btn.disabled = false;
+    }
   });
 
   document.querySelectorAll('a[href^="#"]').forEach(a => {
